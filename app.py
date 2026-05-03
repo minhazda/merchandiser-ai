@@ -29,7 +29,7 @@ html, body, [class*="css"] {
     border-radius: 16px;
     color: white;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 .hero h1 {
@@ -121,58 +121,75 @@ except Exception:
     st.stop()
 
 # ─────────────────────────────────────────────
-# HERO SECTION
+# HERO SECTION & LANGUAGE TOGGLE
 # ─────────────────────────────────────────────
 st.markdown("""
 <div class="hero">
     <h1>🧵 MerchandiserAI</h1>
     <p>বাংলাদেশের গার্মেন্টস শিল্পের জন্য AI-চালিত বায়ার কমিউনিকেশন সহকারী</p>
     <p><em>Your AI Copilot for Professional Buyer Communication</em></p>
-    <span class="badge">✅ বাংলা ও English উভয় ভাষায় কাজ করে</span>
 </div>
 """, unsafe_allow_html=True)
+
+col_spacer1, col_lang, col_spacer2 = st.columns([1, 2, 1])
+with col_lang:
+    app_language = st.radio(
+        "🌐 App Language / অ্যাপের ভাষা:",
+        options=["বাংলা", "English"],
+        horizontal=True
+    )
+
+# Dynamic Language Variables
+is_en = app_language == "English"
+lang_name = "English" if is_en else "Bangla (বাংলা)"
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 # TABS
 # ─────────────────────────────────────────────
 tab1, tab2, tab3 = st.tabs([
-    "📋 Tech Pack বুঝুন",
-    "✉️ Buyer Email লিখুন",
-    "🚨 Red Flag চেক করুন"
+    "📋 Tech Pack" if is_en else "📋 Tech Pack বুঝুন",
+    "✉️ Buyer Email" if is_en else "✉️ Buyer Email লিখুন",
+    "🚨 Red Flags" if is_en else "🚨 Red Flag চেক করুন"
 ])
 
 # ══════════════════════════════════════════════
 # TAB 1 — TECH PACK TRANSLATOR
 # ══════════════════════════════════════════════
 with tab1:
-    st.subheader("📋 টেক প্যাক / বায়ারের ডকুমেন্ট বুঝুন")
-    st.markdown("""
+    st.subheader("📋 Understand Tech Pack" if is_en else "📋 টেক প্যাক / বায়ারের ডকুমেন্ট বুঝুন")
+    
+    tip_text = "<strong>How to use:</strong> Paste any part of a buyer's email or tech pack below. The AI will explain it simply and tell you the next steps." if is_en else "<strong>কীভাবে ব্যবহার করবেন:</strong> বায়ারের ইমেইল বা টেক প্যাক থেকে যেকোনো অংশ কপি করে নিচে পেস্ট করুন। সহজ ভাষায় বুঝিয়ে দেওয়া হবে + পরবর্তী পদক্ষেপ বলা হবে।"
+    
+    st.markdown(f"""
     <div class="tip-box">
-    💡 <strong>কীভাবে ব্যবহার করবেন:</strong> বায়ারের ইমেইল বা টেক প্যাক থেকে যেকোনো অংশ কপি করে নিচে পেস্ট করুন।
-    সহজ বাংলায় বুঝিয়ে দেওয়া হবে + পরবর্তী পদক্ষেপ বলা হবে।
+    💡 {tip_text}
     </div>
     """, unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 1])
     with col1:
-        buyer_name = st.text_input("বায়ারের নাম", placeholder="যেমন: H&M, Zara, Next, Primark...")
+        buyer_name = st.text_input("Buyer Name" if is_en else "বায়ারের নাম", placeholder="e.g., H&M, Zara, Next, Primark...")
     with col2:
         specific_q = st.text_input(
-            "নির্দিষ্ট প্রশ্ন আছে? (ঐচ্ছিক)",
-            placeholder="যেমন: GSM কত হবে? Fabric কোথা থেকে নেব?"
+            "Specific Question? (Optional)" if is_en else "নির্দিষ্ট প্রশ্ন আছে? (ঐচ্ছিক)",
+            placeholder="e.g., What is the GSM? Where to source fabric?" if is_en else "যেমন: GSM কত হবে? Fabric কোথা থেকে নেব?"
         )
 
     tech_text = st.text_area(
-        "টেক প্যাক / বায়ারের ডকুমেন্ট এখানে পেস্ট করুন",
+        "Paste Tech Pack / Buyer Document Here" if is_en else "টেক প্যাক / বায়ারের ডকুমেন্ট এখানে পেস্ট করুন",
         height=220,
-        placeholder="বায়ারের ইমেইল, টেক প্যাক বা যেকোনো স্পেসিফিকেশন এখানে পেস্ট করুন..."
+        placeholder="Paste specifications, emails, or tech pack details here..." if is_en else "বায়ারের ইমেইল, টেক প্যাক বা যেকোনো স্পেসিফিকেশন এখানে পেস্ট করুন..."
     )
 
-    if st.button("🔍 বিশ্লেষণ করো", key="tp_btn"):
+    btn_text1 = "🔍 Analyze Tech Pack" if is_en else "🔍 বিশ্লেষণ করো"
+    if st.button(btn_text1, key="tp_btn"):
         if not tech_text.strip():
-            st.warning("টেক প্যাকের টেক্সট পেস্ট করুন।")
+            st.warning("Please paste the document." if is_en else "টেক প্যাকের টেক্সট পেস্ট করুন।")
         else:
-            with st.spinner("AI বিশ্লেষণ করছে... (১০-২০ সেকেন্ড)"):
+            spinner_text = "AI is analyzing... (10-20 sec)" if is_en else "AI বিশ্লেষণ করছে... (১০-২০ সেকেন্ড)"
+            with st.spinner(spinner_text):
                 prompt = f"""You are a senior RMG (Ready Made Garments) merchandising expert with 25 years of experience 
 in Bangladesh's garment export industry, working with global buyers like H&M, Zara, Primark, Next, and Walmart.
 
@@ -184,31 +201,31 @@ A merchandiser in a Bangladesh factory has shared this document from {buyer_name
 
 {f'Their specific question: {specific_q}' if specific_q else ''}
 
-Provide a structured, practical analysis:
+Provide a structured, practical analysis. YOU MUST WRITE THE ENTIRE RESPONSE IN {lang_name}:
 
-## ১. সহজ বাংলা ব্যাখ্যা (Simple Bangla Summary)
-Explain what the buyer wants in very simple Bangla. Imagine explaining to a junior merchandiser on their first week. Use bullet points. Be specific.
+## 1. Simple Summary ({lang_name})
+Explain what the buyer wants in very simple {lang_name}. Imagine explaining to a junior merchandiser on their first week. Use bullet points. Be specific.
 
-## ২. Key Requirements (English)
+## 2. Key Requirements ({lang_name})
 List ALL critical specs: fabric composition, GSM, colors (Pantone if mentioned), measurements, certifications, packaging, labeling, lead time.
 
-## ৩. আপনার করণীয় (Action Steps — বাংলায়)
+## 3. Action Steps ({lang_name})
 Step-by-step numbered list of what the merchandiser must do RIGHT NOW and in what order.
 
-## ৪. Technical Specs Summary
+## 4. Technical Specs Summary
 Extract any measurements, sizes, tolerances, or technical numbers in a clean table format.
 
-## ৫. ⚠️ বিপদের জায়গা (Critical Warnings)
-Any part of this document that could cause: sample rejection, shipment delay, or payment issues — explain in plain Bangla WHY it's risky and what to do about it.
+## 5. ⚠️ Critical Warnings ({lang_name})
+Any part of this document that could cause: sample rejection, shipment delay, or payment issues — explain in plain {lang_name} WHY it's risky and what to do about it.
 
 Be practical. Use Bangladesh RMG context throughout."""
 
                 try:
                     resp = model.generate_content(prompt)
-                    st.markdown("### ✅ বিশ্লেষণ সম্পন্ন")
+                    st.markdown("### ✅ Analysis Complete" if is_en else "### ✅ বিশ্লেষণ সম্পন্ন")
                     st.markdown(f'<div class="output-card">{resp.text}</div>', unsafe_allow_html=True)
                     st.download_button(
-                        "📥 Analysis ডাউনলোড করুন (.txt)",
+                        "📥 Download Analysis (.txt)" if is_en else "📥 Analysis ডাউনলোড করুন (.txt)",
                         resp.text,
                         file_name=f"techpack_analysis_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
                         mime="text/plain"
@@ -220,45 +237,50 @@ Be practical. Use Bangladesh RMG context throughout."""
 # TAB 2 — BUYER EMAIL DRAFTER
 # ══════════════════════════════════════════════
 with tab2:
-    st.subheader("✉️ Professional Buyer Email লিখুন")
-    st.markdown("""
+    st.subheader("✉️ Draft Professional Buyer Email" if is_en else "✉️ Professional Buyer Email লিখুন")
+    
+    tip_text2 = "<strong>How to use:</strong> Describe the situation in your own words. The AI will write a perfectly formatted, professional email ready to send." if is_en else "<strong>কীভাবে ব্যবহার করবেন:</strong> পরিস্থিতি বাংলায় বলুন — AI সঠিক industry format-এ professional email লিখে দেবে। Subject line থেকে sign-off পর্যন্ত সব কিছু।"
+    
+    st.markdown(f"""
     <div class="tip-box">
-    💡 <strong>কীভাবে ব্যবহার করবেন:</strong> পরিস্থিতি বাংলায় বলুন — AI সঠিক industry format-এ professional email লিখে দেবে।
-    Subject line থেকে sign-off পর্যন্ত সব কিছু।
+    💡 {tip_text2}
     </div>
     """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        buyer = st.text_input("বায়ারের নাম", placeholder="H&M, Zara, Next...")
+        buyer = st.text_input("Buyer Name" if is_en else "বায়ারের নাম", placeholder="H&M, Zara, Next...", key="b2")
         order_no = st.text_input("Order/Style No.", placeholder="H&M-S26-0012")
     with col2:
-        email_type = st.selectbox("Email-এর ধরন", [
-            "শিপমেন্ট দেরি হবে (Delay Notification)",
-            "স্যাম্পল অ্যাপ্রুভাল চাওয়া (Sample Approval)",
-            "দাম নিয়ে আলোচনা (Price Negotiation)",
-            "টেক প্যাক সম্পর্কে প্রশ্ন (Clarification Request)",
-            "শিপমেন্ট নিশ্চিতকরণ (Shipment Confirmation)",
-            "সমস্যা জানানো (Problem Reporting)",
-            "ফলো-আপ (Follow-up / চেজ করা)",
-            "অন্য (Other)"
-        ])
-        urgency = st.selectbox("জরুরি মাত্রা", ["Normal", "Urgent", "Very Urgent"])
+        email_opts = [
+            "Delay Notification", "Sample Approval", "Price Negotiation", 
+            "Clarification Request", "Shipment Confirmation", "Problem Reporting", 
+            "Follow-up", "Other"
+        ] if is_en else [
+            "শিপমেন্ট দেরি হবে (Delay Notification)", "স্যাম্পল অ্যাপ্রুভাল চাওয়া (Sample Approval)",
+            "দাম নিয়ে আলোচনা (Price Negotiation)", "টেক প্যাক সম্পর্কে প্রশ্ন (Clarification Request)",
+            "শিপমেন্ট নিশ্চিতকরণ (Shipment Confirmation)", "সমস্যা জানানো (Problem Reporting)",
+            "ফলো-আপ (Follow-up / চেজ করা)", "অন্য (Other)"
+        ]
+        email_type = st.selectbox("Email Type" if is_en else "Email-এর ধরন", email_opts)
+        urgency = st.selectbox("Urgency" if is_en else "জরুরি মাত্রা", ["Normal", "Urgent", "Very Urgent"])
     with col3:
-        your_name = st.text_input("আপনার নাম ও পদবী", placeholder="Rahim, Sr. Merchandiser")
-        factory = st.text_input("কোম্পানির নাম", placeholder="XYZ Garments Ltd.")
+        your_name = st.text_input("Your Name & Title" if is_en else "আপনার নাম ও পদবী", placeholder="Rahim, Sr. Merchandiser")
+        factory = st.text_input("Company Name" if is_en else "কোম্পানির নাম", placeholder="XYZ Garments Ltd.")
 
     situation = st.text_area(
-        "পরিস্থিতি বাংলায় বলুন (যত বিস্তারিত বলবেন, ততো ভালো email পাবেন)",
+        "Describe the situation (The more details, the better the email)" if is_en else "পরিস্থিতি বাংলায় বা ইংরেজিতে বলুন (যত বিস্তারিত বলবেন, ততো ভালো email পাবেন)",
         height=150,
-        placeholder="যেমন: আমাদের fabric supplier Gazipur থেকে দেরিতে deliver করেছে। Original ship date ছিল ১৫ মে কিন্তু এখন ১ জুনের আগে ship করা সম্ভব না। বায়ার H&M খুব strict এবং এর আগেও একবার complain করেছে। কীভাবে email লিখব যাতে relationship নষ্ট না হয়?"
+        placeholder="e.g. Fabric supplier delayed delivery. We need a 2 week extension on shipment..." if is_en else "যেমন: আমাদের fabric supplier Gazipur থেকে দেরিতে deliver করেছে। Original ship date ১৫ মে ছিল..."
     )
 
-    if st.button("✉️ Email তৈরি করো", key="email_btn"):
+    btn_text2 = "✉️ Generate Email" if is_en else "✉️ Email তৈরি করো"
+    if st.button(btn_text2, key="email_btn"):
         if not situation.strip():
-            st.warning("পরিস্থিতি বর্ণনা করুন।")
+            st.warning("Please describe the situation." if is_en else "পরিস্থিতি বর্ণনা করুন।")
         else:
-            with st.spinner("Professional email লেখা হচ্ছে..."):
+            spinner_text2 = "Drafting professional email..." if is_en else "Professional email লেখা হচ্ছে..."
+            with st.spinner(spinner_text2):
                 prompt = f"""You are a senior RMG merchandising expert in Bangladesh with 20+ years of buyer communication experience with global fashion brands.
 
 Write a professional buyer email for this situation:
@@ -269,41 +291,40 @@ Email Type: {email_type}
 Urgency: {urgency}
 From: {your_name or 'Senior Merchandiser'}, {factory or 'our factory'}
 
-Situation (in Bangla): {situation}
+Situation: {situation}
 
 Format your response EXACTLY like this:
 
 ---
 **📧 SUBJECT LINE:**
-[Industry-standard subject: Buyer | Factory | Season/Order | Topic]
+[Industry-standard subject: Buyer | Factory | Season/Order | Topic - IN ENGLISH]
 
 **📝 EMAIL BODY:**
-[Complete professional email body]
+[Complete professional email body - IN ENGLISH]
 ---
 
-**🇧🇩 কেন এই approach কাজ করবে (Bangla explanation):**
-[2-3 sentences explaining the strategy]
+**💡 Strategy Explanation ({lang_name}):**
+[2-3 sentences explaining the strategy behind the email in {lang_name}]
 
-**➡️ Email পাঠানোর পর কী করবেন:**
-[2-3 numbered follow-up steps in Bangla]
+**➡️ Next Steps ({lang_name}):**
+[2-3 numbered follow-up steps to take after sending, in {lang_name}]
 
-**⚠️ এই ধরনের পরিস্থিতিতে যা করবেন না:**
-[2-3 common mistakes to avoid, in Bangla]
+**⚠️ Mistakes to Avoid ({lang_name}):**
+[2-3 common mistakes to avoid in this specific scenario, in {lang_name}]
 
 Requirements:
-- Use correct RMG email format
-- Subject must follow: [Buyer] | [Factory] | [Season] | [Topic] convention
+- The EMAIL BODY and SUBJECT MUST be in professional English.
+- The explanations and advice MUST be in {lang_name}.
 - Use appropriate industry terms (TNA, AQL, GSM, FOB, ETD, ETA, L/C, B/L etc.)
 - Tone must match urgency: {urgency}
-- Be diplomatic but professional
-- Include specific details from the situation"""
+- Be diplomatic but professional"""
 
                 try:
                     resp = model.generate_content(prompt)
-                    st.markdown("### ✅ আপনার Professional Email প্রস্তুত")
+                    st.markdown("### ✅ Your Email is Ready" if is_en else "### ✅ আপনার Professional Email প্রস্তুত")
                     st.markdown(f'<div class="output-card">{resp.text}</div>', unsafe_allow_html=True)
                     st.download_button(
-                        "📥 Email ডাউনলোড করুন",
+                        "📥 Download Email" if is_en else "📥 Email ডাউনলোড করুন",
                         resp.text,
                         file_name=f"buyer_email_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
                         mime="text/plain"
@@ -316,45 +337,51 @@ Requirements:
 # ══════════════════════════════════════════════
 with tab3:
     st.subheader("🚨 LC / Compliance Document Red Flag Detector")
-    st.markdown("""
+    
+    tip_text3 = "<strong>How to use:</strong> Paste LC terms, compliance requirements, or any buyer document. The AI will catch dangerous clauses before they become costly mistakes." if is_en else "<strong>কীভাবে ব্যবহার করবেন:</strong> LC টার্মস, compliance requirements বা যেকোনো buyer document পেস্ট করুন। AI বিপদের জায়গাগুলো আগেই ধরে ফেলবে — costly mistake এড়িয়ে চলুন।"
+    
+    st.markdown(f"""
     <div class="tip-box">
-    💡 <strong>কীভাবে ব্যবহার করবেন:</strong> LC টার্মস, compliance requirements বা যেকোনো buyer document পেস্ট করুন।
-    AI বিপদের জায়গাগুলো আগেই ধরে ফেলবে — costly mistake এড়িয়ে চলুন।
+    💡 {tip_text3}
     </div>
     """, unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 1])
     with col1:
-        doc_type = st.selectbox("ডকুমেন্টের ধরন", [
-            "LC (Letter of Credit) Terms",
-            "Compliance Audit Requirements (WRAP, BSCI, Sedex, GOTS)",
-            "Purchase Order (PO) Terms & Conditions",
-            "Quality Manual / AQL Requirements",
-            "Buyer Code of Conduct",
-            "Shipping / Packing Instructions",
-            "অন্য Buyer Document"
-        ])
+        doc_opts = [
+            "LC (Letter of Credit) Terms", "Compliance Audit Requirements",
+            "Purchase Order (PO) Terms & Conditions", "Quality Manual / AQL",
+            "Buyer Code of Conduct", "Shipping / Packing Instructions", "Other Document"
+        ] if is_en else [
+            "LC (Letter of Credit) Terms", "Compliance Audit Requirements (WRAP, BSCI, Sedex, GOTS)",
+            "Purchase Order (PO) Terms & Conditions", "Quality Manual / AQL Requirements",
+            "Buyer Code of Conduct", "Shipping / Packing Instructions", "অন্য Buyer Document"
+        ]
+        doc_type = st.selectbox("Document Type" if is_en else "ডকুমেন্টের ধরন", doc_opts)
     with col2:
         factory_info = st.text_area(
-            "আপনার Factory সম্পর্কে বলুন (ঐচ্ছিক কিন্তু গুরুত্বপূর্ণ)",
+            "About Your Factory (Optional but recommended)" if is_en else "আপনার Factory সম্পর্কে বলুন (ঐচ্ছিক কিন্তু গুরুত্বপূর্ণ)",
             height=100,
-            placeholder="যেমন: আমরা woven factory, WRAP certified, lead time ৯০ দিন, LC payment করি..."
+            placeholder="e.g. We are a woven factory, no internal washing plant, standard lead time 90 days..." if is_en else "যেমন: আমরা woven factory, WRAP certified, lead time ৯০ দিন, LC payment করি..."
         )
 
     doc_text = st.text_area(
-        "ডকুমেন্ট এখানে পেস্ট করুন",
+        "Paste Document Here" if is_en else "ডকুমেন্ট এখানে পেস্ট করুন",
         height=250,
-        placeholder="LC টার্মস, compliance চেকলিস্ট, PO conditions বা যেকোনো buyer document এর টেক্সট এখানে পেস্ট করুন..."
+        placeholder="Paste LC terms, PO conditions, or compliance text here..." if is_en else "LC টার্মস, compliance চেকলিস্ট, PO conditions বা যেকোনো buyer document এর টেক্সট এখানে পেস্ট করুন..."
     )
 
-    if st.button("🚨 Red Flags খুঁজে বের করো", key="rf_btn"):
+    btn_text3 = "🚨 Detect Red Flags" if is_en else "🚨 Red Flags খুঁজে বের করো"
+    if st.button(btn_text3, key="rf_btn"):
         if not doc_text.strip():
-            st.warning("ডকুমেন্ট পেস্ট করুন।")
+            st.warning("Please paste the document." if is_en else "ডকুমেন্ট পেস্ট করুন।")
         else:
-            with st.spinner("ডকুমেন্ট বিশ্লেষণ করা হচ্ছে... মনোযোগ দিয়ে পড়ুন..."):
+            spinner_text3 = "Scanning document for risks... please wait..." if is_en else "ডকুমেন্ট বিশ্লেষণ করা হচ্ছে... মনোযোগ দিয়ে পড়ুন..."
+            with st.spinner(spinner_text3):
                 prompt = f"""You are Bangladesh's top RMG compliance and LC expert — a consultant who has saved factories from millions of dollars in losses by catching document errors early.
 
-Analyze this {doc_type} for a Bangladesh garment factory:
+Analyze this {doc_type} for a Bangladesh garment factory.
+WRITE YOUR ENTIRE ANALYSIS IN {lang_name}.
 
 Factory Context: {factory_info or 'Standard Bangladesh export-oriented RMG factory'}
 
@@ -363,36 +390,36 @@ Document:
 {doc_text}
 ---
 
-Provide a structured risk assessment:
+Provide a structured risk assessment in {lang_name}:
 
-## 🚨 CRITICAL RED FLAGS — অবিলম্বে ব্যবস্থা নিন
+## 🚨 CRITICAL RED FLAGS
 For each critical issue found:
-- **সমস্যা:** [What is the issue]
-- **বিপদ:** [What could go wrong — shipment rejection? payment delay? audit failure?]
-- **সমাধান:** [Exactly what to do RIGHT NOW, step by step]
+- **Issue:** [What is the issue]
+- **Risk:** [What could go wrong — shipment rejection? payment delay? audit failure?]
+- **Solution:** [Exactly what to do RIGHT NOW, step by step]
 
-If no critical issues: write "✅ কোনো critical red flag পাওয়া যায়নি"
+If no critical issues: write "✅ No critical red flags found" (in {lang_name})
 
-## ⚠️ সতর্কতা — মনোযোগ দিন
-Conditions that need attention but are manageable. Explain each briefly in Bangla.
+## ⚠️ Warnings
+Conditions that need attention but are manageable. Explain each briefly in {lang_name}.
 
-## ✅ স্বাভাবিক বিষয়
+## ✅ Standard Clauses
 Briefly list clauses that are standard and fine. (Keep this short)
 
-## 📋 এখনই করুন — Action Checklist
+## 📋 Action Checklist
 Numbered list of things the factory must verify or prepare immediately.
 
-## 💡 বিশেষজ্ঞ পরামর্শ
+## 💡 Expert Advice
 1-2 practical tips based on Bangladesh RMG industry experience.
 
-Be specific. Name exact clause types. Use Bangladesh industry context. Write warnings in Bangla where it helps understanding."""
+Be specific. Name exact clause types. Use Bangladesh industry context."""
 
                 try:
                     resp = model.generate_content(prompt)
-                    st.markdown("### ✅ Red Flag Analysis সম্পন্ন")
+                    st.markdown("### ✅ Analysis Complete" if is_en else "### ✅ Red Flag Analysis সম্পন্ন")
                     st.markdown(f'<div class="output-card">{resp.text}</div>', unsafe_allow_html=True)
                     st.download_button(
-                        "📥 Analysis ডাউনলোড করুন",
+                        "📥 Download Analysis" if is_en else "📥 Analysis ডাউনলোড করুন",
                         resp.text,
                         file_name=f"redflag_analysis_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
                         mime="text/plain"
@@ -406,7 +433,7 @@ Be specific. Name exact clause types. Use Bangladesh industry context. Write war
 st.markdown("---")
 st.markdown("""
 <div style='text-align:center; color:#888; padding:1rem; font-size:0.9rem;'>
-    🧵 <strong>MerchandiserAI</strong> — বাংলাদেশের গার্মেন্টস শিল্পের জন্য তৈরি<br>
-    সাহায্য বা subscription-এর জন্য WhatsApp করুন: <strong>+880 XXXXXXXXXX</strong>
+    🧵 <strong>MerchandiserAI</strong> — Built for the Bangladesh Garment Industry<br>
+    For support or subscription WhatsApp: <strong>+880 XXXXXXXXXX</strong>
 </div>
 """, unsafe_allow_html=True)
