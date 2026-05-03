@@ -109,6 +109,49 @@ html, body, [class*="css"] {
 footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
+# ─────────────────────────────────────────────
+# 🔒 LOGIN SYSTEM (THE GATEKEEPER)
+# ─────────────────────────────────────────────
+def check_password():
+    """Returns `True` if the user had the correct password."""
+    def password_entered():
+        user = st.session_state["username_input"].strip()
+        pwd = st.session_state["password_input"].strip()
+        
+        # Check if passwords dict exists in secrets and matches
+        if "passwords" in st.secrets and user in st.secrets["passwords"] and st.secrets["passwords"][user] == pwd:
+            st.session_state["password_correct"] = True
+            del st.session_state["password_input"]  # Clear from memory for security
+        else:
+            st.session_state["password_correct"] = False
+
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # Show Login Screen
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("""
+        <div class='hero' style='padding: 2rem; margin-bottom: 1rem;'>
+            <h2>🔒 Factory Login</h2>
+            <p>Please enter your access credentials to use MerchandiserAI.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.text_input("Factory ID (Username)", key="username_input")
+        st.text_input("Access Code (Password)", type="password", key="password_input")
+        st.button("Log In", on_click=password_entered)
+        
+        if "password_correct" in st.session_state and not st.session_state["password_correct"]:
+            st.error("❌ Incorrect Factory ID or Access Code. Contact Admin for access.")
+            
+    return False
+
+if not check_password():
+    st.stop() # Stops the rest of the app from loading until logged in!
+
+# ─────────────────────────────────────────────
 
 # ─────────────────────────────────────────────
 # GEMINI SETUP
