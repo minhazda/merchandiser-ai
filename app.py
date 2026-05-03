@@ -143,23 +143,20 @@ def check_password():
         st.text_input("Access Code (Password)", type="password", key="password_input")
         st.button("Log In", on_click=password_entered)
         
-        # ADD THIS NEW SECTION RIGHT HERE
-        st.markdown("---")
-        st.markdown("""
-        <div style='text-align:center;'>
-            <p style='margin-bottom: 5px; font-size: 0.9rem;'>Don't have an account?</p>
-            <a href="https://wa.me/8801XXXXXXXXX?text=Hello,%20I%20would%20like%20a%203-day%20free%20trial%20of%20MerchandiserAI" target="_blank" style="text-decoration: none;">
-                <button style="background-color: #25D366; color: white; border: none; border-radius: 8px; padding: 0.5rem 1rem; font-weight: bold; cursor: pointer; width: 100%;">
-                    💬 Request 3-Day Free Trial (WhatsApp)
-                </button>
-            </a>
-        </div>
-        """, unsafe_allow_html=True)
-        
         if "password_correct" in st.session_state and not st.session_state["password_correct"]:
-            st.error("❌ Incorrect Factory ID or Access Code.")
-# ─────────────────────────────────────────────
+            st.error("❌ Incorrect Factory ID or Access Code. Contact Admin for access.")
+            
+    return False
 
+if not check_password():
+    st.stop() # Stops the rest of the app from loading until logged in!
+
+# ─────────────────────────────────────────────
+# GEMINI SETUP (Your existing code continues here...)
+# ─────────────────────────────────────────────
+# try:
+#     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+# ...
 # ─────────────────────────────────────────────
 # GEMINI SETUP
 # ─────────────────────────────────────────────
