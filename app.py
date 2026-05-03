@@ -487,6 +487,6 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align:center; color:#888; padding:1rem; font-size:0.9rem;'>
     🧵 <strong>MerchandiserAI</strong> — Built for the Bangladesh Garment Industry<br>
-    For support or subscription WhatsApp: <strong>+880 XXXXXXXXXX</strong>
+    For support or subscription WhatsApp: <strong>+880 1303454309</strong>
 </div>
 """, unsafe_allow_html=True)
