@@ -115,7 +115,7 @@ footer { visibility: hidden; }
 # ─────────────────────────────────────────────
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-3-flash")
 except Exception:
     st.error("⚠️ API key সেট করা হয়নি। secrets.toml ফাইলে GEMINI_API_KEY যোগ করুন।")
     st.stop()
